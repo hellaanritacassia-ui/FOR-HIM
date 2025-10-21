@@ -1,16 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>To My Boiler 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
+  <style>
+    /* --- Styles (desktop layout) --- */
+    :root{ --rose:#e26a6a; --bg:#fff6ea; --white:#fff; --deep:#333; }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:'Poppins',sans-serif; background-color:var(--bg); color:var(--deep);
+      overflow-x:hidden; transition:opacity .5s ease;
+    }
+    header{
+      text-align:center;
+      background:linear-gradient(135deg,#ffe3e3,#fff6ea);
+      padding:70px 20px;
+    }
+    header h1{ font-family:'Parisienne',cursive; font-size:60px; color:var(--rose); margin:0; }
+    section{ padding:50px 100px; text-align:center; }
+    .letter{
+      background:var(--white); margin:0 auto; max-width:900px; padding:40px; border-radius:20px;
+      box-shadow:0 5px 20px rgba(0,0,0,0.08); font-size:20px; line-height:1.8;
+    }
+    .signature{ margin-top:30px; font-family:'Parisienne',cursive; font-size:26px; color:var(--rose); }
 
+    .memories-title{ font-family:'Parisienne',cursive; color:var(--rose); font-size:42px; margin-top:60px; }
+    .surprise-btn{
+      background:var(--rose); color:var(--white); border:none; padding:15px 40px; border-radius:25px;
+      font-size:18px; cursor:pointer; margin-top:30px;
+    }
+    .surprise-btn:hover{ transform:scale(1.03); }
+
+    .photobooth{ display:flex; flex-wrap:wrap; justify-content:center; gap:40px; padding:60px 0; position:relative; }
+    .polaroid{
+      position:relative; width:220px; background:var(--white); padding:10px; border-radius:10px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.12); transform:rotate(-2deg); transition:transform .25s ease;
+      cursor:pointer;
+    }
+    .polaroid:hover{ transform:rotate(0deg) scale(1.06); box-shadow:0 14px 30px rgba(0,0,0,0.18); }
+    .polaroid img{ width:100%; height:180px; object-fit:cover; border-radius:10px; display:block; }
+
+    .hidden{ display:none; }
+
+    /* Popup */
+    .popup{
+      position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
+      background:rgba(20,20,20,0.85); opacity:0; pointer-events:none; transition:opacity .3s ease; z-index:1200;
+    }
+    .popup.show{ opacity:1; pointer-events:auto; }
+    .popup img{
+      width:55%; max-width:700px; border-radius:14px;
+      box-shadow:0 0 30px 5px #ff69b4,0 0 60px 10px #f0f,0 0 90px 20px #00ffff;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 20px #ff69b4,0 0 40px #ffb6c1; }
+      to   { box-shadow: 0 0 40px #ff1493,0 0 70px #ff69b4; }
+    }
+
+    .close{ position:absolute; top:30px; right:40px; color:#fff; font-size:2.6rem; cursor:pointer; }
+    .arrow{ position:absolute; top:50%; transform:translateY(-50%); color:#fff; font-size:2.6rem; cursor:pointer; user-select:none; padding:10px; opacity:.85; }
+    .arrow.left{ left:30px; } .arrow.right{ right:30px; }
+
+    .effects{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+
+    .heart, .sparkle{
+      position:absolute; bottom:0; width:24px; height:24px; opacity:.9; animation:floatUp 4s ease-in-out infinite;
+    }
+    .heart::before{ content:'💖'; display:block; font-size:20px; }
+    .sparkle::before{ content:'✨'; display:block; font-size:18px; }
+
+    @keyframes floatUp {
+      0%{ transform:translateY(0) scale(.7); opacity:1 } 100%{ transform:translateY(-420px) scale(1.2); opacity:0 }
+    }
+
+    footer{ text-align:center; padding:40px 20px; background:#ffe3e3; font-size:14px; color:#444; }
+
+    /* small screens fallback so layout not broken on narrow windows */
+    @media (max-width:1000px){
+      header h1{ font-size:44px }
+      section{ padding:30px 30px }
+      .letter{ font-size:18px; padding:28px; max-width:720px }
+      .polaroid{ width:180px }
+      .polaroid img{ height:150px }
+      .popup img{ width:75%; max-width:620px }
+    }
+  </style>
+</head>
 <body>
 
-  <!-- autoplay song -->
+  <!-- autoplay song (muted first; page-level play attempt) -->
   <audio id="bg-music" autoplay loop muted>
     <source src="love.mp3" type="audio/mpeg">
   </audio>
@@ -32,8 +113,7 @@
       I know we tease, laugh and argue... but end of the day,  
       it’s always "you" who I want to talk to, laugh with and love endlessly.  
       You’re my favourite chapter, my forever paragraph 😭  
-      No matter what happens in the future...  
-      you'll always have a special place in my heart. 
+      No matter what happens in the future... you'll always have a special place in my heart. 
     </p>
     <p>
       Naan un kooda iruppen daa maa... 💞<br>
@@ -57,79 +137,58 @@
       <div class="polaroid"><img src="fav.jpg" alt="Memory 4"></div>
     </div>
 
-    <div class="popup" id="popup">
-      <span class="close" id="closeBtn">&times;</span>
-      <span class="arrow left" id="prevBtn">&#10094;</span>
+    <!-- Popup -->
+    <div class="popup" id="popup" aria-hidden="true" role="dialog">
+      <span class="close" id="closeBtn" title="Close">&times;</span>
+      <span class="arrow left" id="prevBtn" title="Previous">&#10094;</span>
       <img id="popupImg" src="" alt="Memory" />
-      <span class="arrow right" id="nextBtn">&#10095;</span>
-      <div class="effects"></div>
+      <span class="arrow right" id="nextBtn" title="Next">&#10095;</span>
+      <div class="effects" id="effects"></div>
     </div>
   </section>
 
   <footer>Made with 💖 by Hellaan for Boiler</footer>
 
   <script>
-    // MUSIC AUTOPLAY FIX
+    // --- Elements ---
     const music = document.getElementById('bg-music');
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        music.muted = false;
-        music.play().catch(() => {});
-      }, 1500);
-    });
-    document.addEventListener('click', () => {
-      music.muted = false;
-      music.play().catch(() => {});
-    });
-
-    // PHOTO POPUP FUNCTION
     const showMemoriesBtn = document.getElementById('showMemories');
     const photobooth = document.getElementById('photobooth');
-    const polaroids = document.querySelectorAll('.polaroid img');
+    const polaroidImgs = Array.from(document.querySelectorAll('.polaroid img'));
     const popup = document.getElementById('popup');
     const popupImg = document.getElementById('popupImg');
     const closeBtn = document.getElementById('closeBtn');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const effects = document.querySelector('.effects');
+    const effects = document.getElementById('effects');
 
     let currentIndex = 0;
 
-    showMemoriesBtn.addEventListener('click', () => {
+    // autoplay attempt (unmute on interaction)
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        music.muted = false;
+        music.play().catch(()=>{});
+      }, 1000);
+    });
+    document.addEventListener('click', () => {
+      music.muted = false;
+      music.play().catch(()=>{});
+    }, { once: true });
+
+    // Show photobooth on button click
+    showMemoriesBtn && showMemoriesBtn.addEventListener('click', () => {
       photobooth.classList.remove('hidden');
       showMemoriesBtn.style.display = 'none';
     });
 
-    function showPopup(index) {
-      currentIndex = index;
-      popupImg.src = polaroids[currentIndex].src;
-      popup.classList.add('show');
+    // Helper: clear & generate effects
+    function regenEffects() {
       effects.innerHTML = '';
-
-      for (let i = 0; i < 15; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add(Math.random() > 0.5 ? 'heart' : 'sparkle');
-        heart.style.left = Math.random() * 100 + '%';
-        heart.style.animationDelay = Math.random() * 2 + 's';
-        effects.appendChild(heart);
-      }
-    }
-
-    polaroids.forEach((img, index) => {
-      img.addEventListener('click', () => showPopup(index));
-    });
-
-    closeBtn.addEventListener('click', () => popup.classList.remove('show'));
-    prevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex - 1 + polaroids.length) % polaroids.length;
-      showPopup(currentIndex);
-    });
-    nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentIndex = (currentIndex + 1) % polaroids.length;
-      showPopup(currentIndex);
-    });
-  </script>
-</body>
-</html>
+      for (let i = 0; i < 14; i++) {
+        const el = document.createElement('div');
+        el.className = Math.random() > 0.5 ? 'heart' : 'sparkle';
+        // random horizontal position
+        el.style.left = (5 + Math.random() * 90) + '%';
+        el.style.bottom = (5 + Math.random() * 10) + 'px';
+        el.style
