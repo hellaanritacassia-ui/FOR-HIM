@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To My Boiler 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- autoplay song -->
+  <audio id="bg-music" autoplay loop muted>
+    <source src="love.mp3" type="audio/mpeg">
+  </audio>
+
+  <header>
+    <h1>To My Boiler 💖</h1>
+  </header>
+
+  <section class="letter">
+    <p>Hi Boiler 😚💞</p>
+    <p>
+      Sometimes words can’t fully tell how much I miss you da...  
+      But still, I just wanted to try ❤️  
+      Every moment with you feels like a dream I never want to wake from.  
+      You’re not just my person — you’re my safe place, my peace, my everything.  
+      When I think of you, the world just feels softer 💗  
+    </p>
+    <p>
+      I know we tease, laugh and argue... but end of the day,  
+      it’s always "you" who I want to talk to, laugh with and love endlessly.  
+      You’re my favourite chapter, my forever paragraph 😭  
+      No matter what happens in the future...  
+      you'll always have a special place in my heart. 
+    </p>
+    <p>
+      Naan un kooda iruppen daa maa... 💞<br>
+      Unnai vida enakku vere yaarum thevai illa...<br>
+      Un kooda irunthaen ennaalum santhosham...<br>
+      Un kooda irunthaen ennaalum uyir tharum...<br>
+      Un kooda irunthaen ennaalum vaazhkai azhagu...<br>
+      ❤️❤️❤️❤️❤️❤️❤️
+    </p>
+    <div class="signature">— Your Love, Hellaan 💋</div>
+  </section>
+
+  <section>
+    <h2 class="memories-title">Our Memories 📸</h2>
+    <button id="showMemories" class="surprise-btn">Click to See Memories 💌</button>
+
+    <div class="photobooth hidden" id="photobooth">
+      <div class="polaroid"><img src="GH.jpg" alt="Memory 1"></div>
+      <div class="polaroid"><img src="b-day.jpg" alt="Memory 2"></div>
+      <div class="polaroid"><img src="chruch.jpg" alt="Memory 3"></div>
+      <div class="polaroid"><img src="fav.jpg" alt="Memory 4"></div>
+    </div>
+
+    <div class="popup" id="popup">
+      <span class="close" id="closeBtn">&times;</span>
+      <span class="arrow left" id="prevBtn">&#10094;</span>
+      <img id="popupImg" src="" alt="Memory" />
+      <span class="arrow right" id="nextBtn">&#10095;</span>
+      <div class="effects"></div>
+    </div>
+  </section>
+
+  <script>
+    // MUSIC AUTOPLAY FIX
+    const music = document.getElementById('bg-music');
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        music.muted = false;
+        music.play().catch(() => {});
+      }, 1500);
+    });
+    document.addEventListener('click', () => {
+      music.muted = false;
+      music.play().catch(() => {});
+    });
+
+    // PHOTO POPUP
+    const showMemoriesBtn = document.getElementById('showMemories');
+    const photobooth = document.getElementById('photobooth');
+    const polaroids = document.querySelectorAll('.polaroid img');
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popupImg');
+    const closeBtn = document.getElementById('closeBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const effects = document.querySelector('.effects');
+
+    let currentIndex = 0;
+
+    showMemoriesBtn.addEventListener('click', () => {
+      photobooth.classList.remove('hidden');
+      showMemoriesBtn.style.display = 'none';
+    });
+
+    function showPopup(index) {
+      currentIndex = index;
+      popupImg.src = polaroids[currentIndex].src;
+      popup.classList.add('show');
+      effects.innerHTML = '';
+
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.classList.add(Math.random() > 0.5 ? 'heart' : 'sparkle');
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        effects.appendChild(heart);
+      }
+    }
+
+    polaroids.forEach((img, index) => {
+      img.addEventListener('click', () => showPopup(index));
+    });
+
+    closeBtn.addEventListener('click', () => popup.classList.remove('show'));
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex - 1 + polaroids.length) % polaroids.length;
+      showPopup(currentIndex);
+    });
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentIndex = (currentIndex + 1) % polaroids.length;
+      showPopup(currentIndex);
+    });
+  </script>
+</body>
+</html>
